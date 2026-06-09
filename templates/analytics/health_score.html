@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block page_title %}Financial Health Score{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <!-- Score Header -->
+    <div class="card p-5 text-center mb-4"
+      style="background:linear-gradient(135deg,rgba(0,212,170,0.08),rgba(124,58,237,0.08));border:1px solid rgba(0,212,170,0.2);">
+      <h2 class="fw-bold mb-1">Your Financial Health Score</h2>
+      <p class="text-muted mb-4">Based on your spending, savings, and budget adherence this month</p>
+      <div
+        style="width:160px;height:160px;border-radius:50%;border:6px solid {% if health_score.color == 'success' %}#00d4aa{% elif health_score.color == 'primary' %}#7c3aed{% elif health_score.color == 'warning' %}#f59e0b{% else %}#ef4444{% endif %};display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;">
+        <div style="font-size:52px;font-weight:700;line-height:1;">{{ health_score.total_score }}</div>
+        <div style="font-size:14px;opacity:0.5;">/100</div>
+      </div>
+      <h3 class="fw-bold">{{ health_score.emoji }} {{ health_score.rating }}</h3>
+    </div>
+
+    <!-- Factor Breakdown -->
+    <div class="card p-4 mb-4">
+      <h5 class="fw-bold mb-4">Score Breakdown</h5>
+      <div class="row g-3">
+
+        <!-- Savings Rate -->
+        <div class="col-md-6">
+          <div
+            style="padding:20px;background:rgba(0,212,170,0.05);border:1px solid rgba(0,212,170,0.15);border-radius:12px;">
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <div class="fw-bold">Savings Rate</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.4);">30% of total score</div>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#00d4aa;">{{ health_score.factors.savings.score }}<span
+                  style="font-size:14px;opacity:0.5;">/30</span></div>
+            </div>
+            <div class="progress mb-2">
+              <div class="progress-bar"
+                style="width:{% widthratio health_score.factors.savings.score 30 100 %}%;background:#00d4aa;"></div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Your savings rate: <strong>{{health_score.factors.savings.rate }}%</strong> (Target: 20%+)</div>
+          </div>
+        </div>
+
+        <!-- Expense Ratio -->
+        <div class="col-md-6">
+          <div
+            style="padding:20px;background:rgba(124,58,237,0.05);border:1px solid rgba(124,58,237,0.15);border-radius:12px;">
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <div class="fw-bold">Expense Ratio</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.4);">25% of total score</div>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#a78bfa;">{{ health_score.factors.expense.score }}<span
+                  style="font-size:14px;opacity:0.5;">/25</span></div>
+            </div>
+            <div class="progress mb-2">
+              <div class="progress-bar"
+                style="width:{% widthratio health_score.factors.expense.score 25 100 %}%;background:#7c3aed;"></div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Expenses vs income: <strong>{{health_score.factors.expense.ratio }}%</strong> (lower is better)</div>
+          </div>
+        </div>
+
+        <!-- Budget Adherence -->
+        <div class="col-md-6">
+          <div
+            style="padding:20px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:12px;">
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <div class="fw-bold">Budget Adherence</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.4);">25% of total score</div>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#f59e0b;">{{ health_score.factors.budget.score }}<span
+                  style="font-size:14px;opacity:0.5;">/25</span></div>
+            </div>
+            <div class="progress mb-2">
+              <div class="progress-bar"
+                style="width:{% widthratio health_score.factors.budget.score 25 100 %}%;background:#f59e0b;"></div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Budgets on track: <strong>{{health_score.factors.budget.adherence }}%</strong></div>
+          </div>
+        </div>
+
+        <!-- Consistency -->
+        <div class="col-md-6">
+          <div
+            style="padding:20px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);border-radius:12px;">
+            <div class="d-flex justify-content-between mb-2">
+              <div>
+                <div class="fw-bold">Spending Consistency</div>
+                <div style="font-size:12px;color:rgba(255,255,255,0.4);">20% of total score</div>
+              </div>
+              <div style="font-size:24px;font-weight:700;color:#f87171;">{{ health_score.factors.consistency.score}}
+                <span style="font-size:14px;opacity:0.5;">/20</span></div>
+            </div>
+            <div class="progress mb-2">
+              <div class="progress-bar"
+                style="width:{% widthratio health_score.factors.consistency.score 20 100 %}%;background:#ef4444;"></div>
+            </div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Based on variance across last 3 months</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score Legend -->
+    <div class="card p-4">
+      <h6 class="fw-bold mb-3">Score Guide</h6>
+      <div class="row g-2">
+        <div class="col-6 col-md-3">
+          <div
+            style="padding:12px;border-radius:8px;background:rgba(0,212,170,0.08);border:1px solid rgba(0,212,170,0.2);text-align:center;">
+            <div style="color:#00d4aa;font-weight:700;font-size:15px;">80-100</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Excellent</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div
+            style="padding:12px;border-radius:8px;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);text-align:center;">
+            <div style="color:#a78bfa;font-weight:700;font-size:15px;">60-79</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Good</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div
+            style="padding:12px;border-radius:8px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);text-align:center;">
+            <div style="color:#f59e0b;font-weight:700;font-size:15px;">40-59</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Average</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div
+            style="padding:12px;border-radius:8px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);text-align:center;">
+            <div style="color:#ef4444;font-weight:700;font-size:15px;">0-39</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">Needs Work</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endblock %}

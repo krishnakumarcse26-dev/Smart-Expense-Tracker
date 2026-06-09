@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block public_content %}
+<div style="min-height:100vh;background:#0d1117;display:flex;flex-direction:column;">
+    <nav style="padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;background:linear-gradient(135deg,#00d4aa,#7c3aed);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;">&#128176;</div>
+            <span style="font-size:18px;font-weight:700;color:#fff;">SmartExpense</span>
+        </div>
+        <div style="display:flex;gap:12px;">
+            <a href="{% url 'login' %}" class="btn btn-outline-light btn-sm" style="border-radius:8px;">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-sm" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;border:none;border-radius:8px;font-weight:600;">Get Started Free</a>
+        </div>
+    </nav>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 20px;">
+        <div style="max-width:700px;">
+            <div style="display:inline-block;padding:6px 16px;background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);border-radius:99px;color:#00d4aa;font-size:13px;font-weight:600;margin-bottom:24px;">
+                FINTECH PLATFORM
+            </div>
+            <h1 style="font-size:clamp(36px,6vw,64px);font-weight:700;line-height:1.1;color:#fff;margin-bottom:20px;">
+                Take Control of<br>
+                <span style="background:linear-gradient(135deg,#00d4aa,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Your Finances</span>
+            </h1>
+            <p style="color:rgba(255,255,255,0.6);font-size:18px;line-height:1.6;margin-bottom:36px;">
+                Track expenses, set budgets, forecast spending, and get a personalized Financial Health Score.
+            </p>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <a href="{% url 'register' %}" class="btn btn-lg" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);color:#fff;border:none;border-radius:10px;font-weight:700;padding:14px 32px;">
+                    Start Tracking Free
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-lg btn-outline-light" style="border-radius:10px;padding:14px 32px;">Sign In</a>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:48px;">
+                <span style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;font-size:13px;color:rgba(255,255,255,0.7);">Financial Health Score</span>
+                <span style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;font-size:13px;color:rgba(255,255,255,0.7);">Smart Insights</span>
+                <span style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;font-size:13px;color:rgba(255,255,255,0.7);">Budget Planner</span>
+                <span style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;font-size:13px;color:rgba(255,255,255,0.7);">Expense Forecast</span>
+                <span style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;font-size:13px;color:rgba(255,255,255,0.7);">Savings Goals</span>
+                <span style="padding:6px 14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:99px;font-size:13px;color:rgba(255,255,255,0.7);">What-If Simulator</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

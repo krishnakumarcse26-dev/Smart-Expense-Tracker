@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block page_title %}What-If Simulator{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card p-4 mb-4">
+      <h5 class="fw-bold mb-1">What-If Financial Simulator</h5>
+      <p class="text-muted small mb-4">Model the impact of reducing spending in any category.</p>
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3 align-items-end">
+          <div class="col-md-5">
+            <label class="form-label small fw-semibold">Category</label>
+            <select name="category" class="form-select" required>
+              <option value="">Select category...</option>
+              {% for cat in categories %}
+              <option value="{{ cat.name }}" {% if result and result.category == cat.name %}selected{% endif %}>{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label small fw-semibold">Reduce spending by (%)</label>
+            <input type="number" name="reduction_pct" class="form-control" min="1" max="100" value="{{ result.reduction_pct|default:20 }}" required>
+          </div>
+          <div class="col-md-3">
+            <button type="submit" class="btn w-100" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);border:none;color:#fff;font-weight:700;border-radius:8px;padding:10px;">Simulate</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    {% if result %}
+    <div class="card p-4" style="background:linear-gradient(135deg,rgba(0,212,170,0.06),rgba(124,58,237,0.06));border:1px solid rgba(0,212,170,0.25);">
+      <h5 class="fw-bold mb-4">Simulation Results: {{ result.category }} &darr; {{ result.reduction_pct }}%</h5>
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="text-center p-3" style="background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Current Spend</div>
+            <div style="font-size:20px;font-weight:700;color:#ef4444;">&#8377;{{ result.current_category_spend|floatformat:0 }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="text-center p-3" style="background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Monthly Saving</div>
+            <div style="font-size:20px;font-weight:700;color:#00d4aa;">+&#8377;{{ result.monthly_saving|floatformat:0 }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="text-center p-3" style="background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Annual Saving</div>
+            <div style="font-size:20px;font-weight:700;color:#00d4aa;">+&#8377;{{ result.annual_saving|floatformat:0 }}</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="text-center p-3" style="background:rgba(255,255,255,0.04);border-radius:10px;">
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);">Score Change</div>
+            <div style="font-size:20px;font-weight:700;color:{% if result.score_improvement > 0 %}#00d4aa{% else %}rgba(255,255,255,0.5){% endif %};">
+              {% if result.score_improvement > 0 %}+{% endif %}{{ result.score_improvement }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:16px;background:rgba(0,212,170,0.06);border:1px solid rgba(0,212,170,0.15);border-radius:10px;font-size:13px;color:rgba(255,255,255,0.7);">
+        <strong style="color:#00d4aa;">Impact Summary:</strong> By reducing <strong>{{ result.category }}</strong> spending by {{ result.reduction_pct }}%, 
+        you save <strong style="color:#00d4aa;">&#8377;{{ result.monthly_saving|floatformat:0 }}/month</strong> and 
+        <strong style="color:#00d4aa;">&#8377;{{ result.annual_saving|floatformat:0 }}/year</strong>. 
+        Your Financial Health Score would improve from <strong>{{ result.current_score }}</strong> to <strong>{{ result.projected_score }}</strong>.
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

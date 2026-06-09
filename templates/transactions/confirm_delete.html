@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block page_title %}Delete Transaction{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card p-4 text-center">
+      <div style="font-size:48px;margin-bottom:16px;">&#128465;</div>
+      <h5 class="fw-bold mb-2">Delete Transaction?</h5>
+      <p class="text-muted mb-1">You are about to delete:</p>
+      <p class="fw-semibold mb-1">{{ transaction.title }}</p>
+      <p style="color:#ef4444;font-weight:700;font-size:18px;">&#8377;{{ transaction.amount }}</p>
+      <p class="text-muted small mb-4">This action cannot be undone.</p>
+      <div class="d-flex gap-2 justify-content-center">
+        <form method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger" style="border-radius:8px;font-weight:600;">Yes, Delete</button>
+        </form>
+        <a href="{% url "transaction_list" %}" class="btn btn-outline-secondary" style="border-radius:8px;">Cancel</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

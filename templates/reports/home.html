@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block page_title %}Reports & Exports{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card p-4 mb-4">
+      <h5 class="fw-bold mb-1">Export Your Data</h5>
+      <p class="text-muted small mb-4">Download your transaction history as CSV or Excel.</p>
+      <div class="row g-2 mb-4">
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Month</label>
+         <select id="month" class="form-select">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+  <option value="7">7</option>
+  <option value="8">8</option>
+  <option value="9">9</option>
+  <option value="10">10</option>
+  <option value="11">11</option>
+  <option value="12">12</option>
+</select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Year</label>
+          <input type="number" id="year" class="form-control" value="2024">
+        </div>
+      </div>
+      <div class="d-flex gap-3 flex-wrap">
+        <a id="csvBtn" href="#" class="btn" style="background:rgba(0,212,170,0.1);border:1px solid rgba(0,212,170,0.3);color:#00d4aa;font-weight:600;border-radius:8px;padding:10px 24px;">
+          <i class="bi bi-filetype-csv"></i> Download CSV
+        </a>
+        <a id="excelBtn" href="#" class="btn" style="background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);color:#a78bfa;font-weight:600;border-radius:8px;padding:10px 24px;">
+          <i class="bi bi-file-earmark-excel"></i> Download Excel
+        </a>
+      </div>
+    </div>
+    <div class="card p-4">
+      <h6 class="fw-bold mb-3">What's included in the export?</h6>
+      <ul style="color:rgba(255,255,255,0.6);font-size:13px;line-height:2;">
+        <li>Date, Title, Category, Type, Amount, Notes for every transaction</li>
+        <li>Summary totals: Total Income, Total Expense, Balance</li>
+        <li>Excel export includes color-coded rows (green = income, red = expense)</li>
+        <li>All data is filtered to the selected month and year</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+  function updateLinks() {
+    const m = document.getElementById("month").value;
+    const y = document.getElementById("year").value;
+    document.getElementById("csvBtn").href = "{% url "export_csv" %}?month=" + m + "&year=" + y;
+    document.getElementById("excelBtn").href = "{% url "export_excel" %}?month=" + m + "&year=" + y;
+  }
+  document.getElementById("month").addEventListener("change", updateLinks);
+  document.getElementById("year").addEventListener("input", updateLinks);
+  updateLinks();
+</script>
+{% endblock %}

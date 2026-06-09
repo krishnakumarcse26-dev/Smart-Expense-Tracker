@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h5 class="fw-bold mb-4">{{ title }}</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label small fw-semibold">Title</label>
+            {{ form.title }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Amount (&#8377;)</label>
+            {{ form.amount }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Date</label>
+            {{ form.date }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Type</label>
+            {{ form.transaction_type }}
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Category</label>
+            {{ form.category }}
+            <a href="{% url "category_list" %}" style="font-size:11px;color:#00d4aa;">+ Add category</a>
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-semibold">Notes (optional)</label>
+            {{ form.notes }}
+          </div>
+        </div>
+        {% if form.errors %}
+        <div class="alert alert-danger mt-3 py-2">
+          {% for field in form %}{% for error in field.errors %}<div>{{ field.label }}: {{ error }}</div>{% endfor %}{% endfor %}
+          {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+        </div>
+        {% endif %}
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);border:none;color:#fff;font-weight:700;padding:10px 28px;border-radius:8px;">{{ button_text }}</button>
+          <a href="{% url "transaction_list" %}" class="btn btn-outline-secondary" style="padding:10px 20px;border-radius:8px;">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

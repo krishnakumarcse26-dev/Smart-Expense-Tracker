@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block page_title %}Delete Subscription{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5">
+  <div class="card p-4 text-center">
+    <h5 class="fw-bold">Delete Subscription?</h5>
+    <p class="text-muted">{{ sub.name }} — &#8377;{{ sub.amount }}/{{ sub.get_frequency_display }}</p>
+    <div class="d-flex gap-2 justify-content-center">
+      <form method="post">{% csrf_token %}<button type="submit" class="btn btn-danger" style="border-radius:8px;">Delete</button></form>
+      <a href="{% url "subscription_list" %}" class="btn btn-outline-secondary" style="border-radius:8px;">Cancel</a>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

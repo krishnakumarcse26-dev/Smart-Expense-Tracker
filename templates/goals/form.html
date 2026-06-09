@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card p-4">
+      <h5 class="fw-bold mb-4">{{ title }}</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3"><label class="form-label small fw-semibold">Goal Name</label>{{ form.name }}</div>
+        <div class="mb-3"><label class="form-label small fw-semibold">Description (optional)</label>{{ form.description }}</div>
+        <div class="row g-2 mb-3">
+          <div class="col-6"><label class="form-label small fw-semibold">Target Amount (&#8377;)</label>{{ form.target_amount }}</div>
+          <div class="col-6"><label class="form-label small fw-semibold">Saved So Far (&#8377;)</label>{{ form.current_amount }}</div>
+        </div>
+        <div class="mb-3"><label class="form-label small fw-semibold">Target Date</label>{{ form.target_date }}</div>
+        <div class="row g-2 mb-3">
+          <div class="col-6"><label class="form-label small fw-semibold">Icon <a href="https://icons.getbootstrap.com" target="_blank" style="color:#00d4aa;font-size:11px;">(browse)</a></label>{{ form.icon }}</div>
+          <div class="col-6"><label class="form-label small fw-semibold">Color</label>{{ form.color }}</div>
+        </div>
+        <div class="d-flex gap-2 mt-4">
+          <button type="submit" class="btn" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);border:none;color:#fff;font-weight:700;padding:10px 28px;border-radius:8px;">{{ title }}</button>
+          <a href="{% url "goal_list" %}" class="btn btn-outline-secondary" style="border-radius:8px;">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block page_title %}Categories{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <div class="col-md-5">
+    <div class="card p-4">
+      <h5 class="fw-bold mb-4">Add Category</h5>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Name</label>
+          {{ form.name }}
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Icon <a href="https://icons.getbootstrap.com" target="_blank" style="color:#00d4aa;font-size:11px;">(Browse)</a></label>
+            {{ form.icon }}
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">e.g. bi-cart, bi-house</div>
+          </div>
+          <div class="col-6">
+            <label class="form-label small fw-semibold">Color</label>
+            {{ form.color }}
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label small fw-semibold">Type</label>
+          {{ form.category_type }}
+        </div>
+        <button type="submit" class="btn w-100" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);border:none;color:#fff;font-weight:600;border-radius:8px;padding:10px;">Add Category</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card p-4">
+      <h5 class="fw-bold mb-4">Your Categories</h5>
+      <div class="row g-2">
+        {% for cat in categories %}
+        <div class="col-6">
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:8px;background:{{ cat.color }}22;border:1px solid {{ cat.color }}44;display:flex;align-items:center;justify-content:center;color:{{ cat.color }};font-size:16px;">
+              <i class="bi {{ cat.icon }}"></i>
+            </div>
+            <div>
+              <div style="font-weight:600;font-size:13px;">{{ cat.name }}</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.4);">{{ cat.get_category_type_display }}</div>
+            </div>
+          </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted py-4">No categories yet. Create one!</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

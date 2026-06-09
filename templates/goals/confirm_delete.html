@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block page_title %}Delete Goal{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-md-5">
+  <div class="card p-4 text-center">
+    <div style="font-size:48px;margin-bottom:12px;">&#128465;</div>
+    <h5 class="fw-bold">Delete Goal?</h5>
+    <p class="text-muted">{{ goal.name }}</p>
+    <div class="d-flex gap-2 justify-content-center">
+      <form method="post">{% csrf_token %}<button type="submit" class="btn btn-danger" style="border-radius:8px;">Delete</button></form>
+      <a href="{% url "goal_list" %}" class="btn btn-outline-secondary" style="border-radius:8px;">Cancel</a>
+    </div>
+  </div>
+</div></div>
+{% endblock %}

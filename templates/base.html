@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SmartExpense{% endblock %} | Smart Finance</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --topbar-height: 65px;
+            --accent: #00d4aa;
+            --accent-2: #7c3aed;
+            --bg-card: #1a1f2e;
+            --bg-sidebar: #0f1318;
+            --bg-main: #0d1117;
+            --border-color: rgba(255,255,255,0.07);
+            --text-muted-custom: rgba(255,255,255,0.5);
+        }
+
+        * { font-family: 'Space Grotesk', sans-serif; }
+        code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+        body {
+            background: var(--bg-main);
+            color: #e8eaf0;
+            min-height: 100vh;
+        }
+
+        /* ── SIDEBAR ─────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+
+        .brand-text { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+        .brand-sub { font-size: 11px; color: var(--text-muted-custom); margin-top: -2px; }
+
+        .sidebar-nav { padding: 16px 12px; flex: 1; overflow-y: auto; }
+
+        .nav-section-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted-custom);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 12px 12px 6px;
+            margin-top: 8px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            margin-bottom: 2px;
+        }
+
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+        }
+
+        .sidebar-link.active {
+            background: linear-gradient(135deg, rgba(0,212,170,0.15), rgba(124,58,237,0.15));
+            color: var(--accent);
+            border: 1px solid rgba(0,212,170,0.2);
+        }
+
+        .sidebar-link i { font-size: 16px; width: 20px; text-align: center; }
+
+        /* ── MAIN CONTENT ─────────────────────────── */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── TOPBAR ───────────────────────────────── */
+        .topbar {
+            height: var(--topbar-height);
+            background: rgba(15, 19, 24, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            backdrop-filter: blur(10px);
+        }
+
+        .topbar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+
+        .user-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: #fff;
+            cursor: pointer;
+        }
+
+        /* ── CARDS ────────────────────────────────── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            opacity: 0.08;
+            transform: translate(30px, -30px);
+        }
+
+        .stat-card.income::before { background: #00d4aa; }
+        .stat-card.expense::before { background: #ef4444; }
+        .stat-card.balance::before { background: #7c3aed; }
+        .stat-card.savings::before { background: #f59e0b; }
+
+        .stat-label { font-size: 12px; color: var(--text-muted-custom); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { font-size: 28px; font-weight: 700; margin: 6px 0; line-height: 1; }
+        .stat-icon { font-size: 22px; opacity: 0.8; }
+
+        /* ── HEALTH SCORE ─────────────────────────── */
+        .score-circle {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-weight: 700;
+            border: 4px solid;
+        }
+
+        /* ── PROGRESS BARS ───────────────────────── */
+        .progress { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.08); }
+        .progress-bar { border-radius: 99px; }
+
+        /* ── PAGE CONTENT ─────────────────────────── */
+        .page-content { padding: 28px; flex: 1; }
+
+        /* ── ALERTS ───────────────────────────────── */
+        .alert { border-radius: 10px; border: none; }
+
+        /* ── TABLES ───────────────────────────────── */
+        .table { color: #e8eaf0; }
+        .table th { color: var(--text-muted-custom); font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; border-color: var(--border-color); }
+        .table td { border-color: var(--border-color); vertical-align: middle; }
+        .table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+        /* ── BADGES ───────────────────────────────── */
+        .badge-income { background: rgba(0,212,170,0.15); color: #00d4aa; border: 1px solid rgba(0,212,170,0.3); }
+        .badge-expense { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+        /* ── FORMS ────────────────────────────────── */
+        .form-control, .form-select {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #e8eaf0;
+            border-radius: 8px;
+        }
+        .form-control:focus, .form-select:focus {
+            background: rgba(255,255,255,0.07);
+            border-color: var(--accent);
+            color: #e8eaf0;
+            box-shadow: 0 0 0 3px rgba(0,212,170,0.15);
+        }
+
+        /* ── BUTTONS ──────────────────────────────── */
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            border: none;
+            color: white;
+            font-weight: 600;
+        }
+        .btn-accent:hover { opacity: 0.9; color: white; transform: translateY(-1px); }
+
+        /* ── MOBILE ───────────────────────────────── */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+
+        /* ── INSIGHT CARDS ────────────────────────── */
+        .insight-card {
+            padding: 14px 16px;
+            border-radius: 10px;
+            border-left: 3px solid;
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 10px;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon">💰</div>
+        <div>
+            <div class="brand-text">SmartExpense</div>
+            <div class="brand-sub">Financial Platform</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Overview</div>
+        <a href="{% url 'dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+            <i class="bi bi-grid"></i> Dashboard
+        </a>
+        <a href="{% url 'health_score' %}" class="sidebar-link {% if request.resolver_match.url_name == 'health_score' %}active{% endif %}">
+            <i class="bi bi-heart-pulse"></i> Health Score
+        </a>
+        
+        <div class="nav-section-label">Money</div>
+        <a href="{% url 'transaction_list' %}" class="sidebar-link {% if 'transaction' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-arrow-left-right"></i> Transactions
+        </a>
+        <a href="{% url 'budget_list' %}" class="sidebar-link {% if 'budget' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-wallet2"></i> Budgets
+        </a>
+        <a href="{% url 'subscription_list' %}" class="sidebar-link {% if 'subscription' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-repeat"></i> Subscriptions
+        </a>
+        
+        <div class="nav-section-label">Planning</div>
+        <a href="{% url 'goal_list' %}" class="sidebar-link {% if 'goal' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-trophy"></i> Savings Goals
+        </a>
+        <a href="{% url 'forecast' %}" class="sidebar-link {% if request.resolver_match.url_name == 'forecast' %}active{% endif %}">
+            <i class="bi bi-graph-up-arrow"></i> Forecast
+        </a>
+        <a href="{% url 'what_if' %}" class="sidebar-link {% if request.resolver_match.url_name == 'what_if' %}active{% endif %}">
+            <i class="bi bi-lightning"></i> What-If Simulator
+        </a>
+        
+        <div class="nav-section-label">Reports</div>
+        <a href="{% url 'reports_home' %}" class="sidebar-link {% if 'report' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-file-earmark-bar-graph"></i> Reports
+        </a>
+        <a href="{% url 'category_list' %}" class="sidebar-link {% if 'category' in request.resolver_match.url_name %}active{% endif %}">
+            <i class="bi bi-tags"></i> Categories
+        </a>
+
+        <div class="nav-section-label">Account</div>
+        <a href="{% url 'profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+            <i class="bi bi-person-circle"></i> Profile
+        </a>
+        <form method="post" action="{% url 'logout' %}" style="margin:0">
+            {% csrf_token %}
+            <button type="submit" class="sidebar-link w-100 text-start" style="background:none;border:none;cursor:pointer;">
+                <i class="bi bi-box-arrow-left"></i> Logout
+            </button>
+        </form>
+    </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-sm d-md-none" onclick="toggleSidebar()" style="color:#fff;background:none;border:none;font-size:20px;">
+                <i class="bi bi-list"></i>
+            </button>
+            <h1 class="topbar-title">{% block page_title %}Dashboard{% endblock %}</h1>
+        </div>
+        <div class="topbar-right">
+            <a href="{% url 'transaction_create' %}" class="btn btn-accent btn-sm d-none d-md-inline-flex align-items-center gap-1">
+                <i class="bi bi-plus-lg"></i> Add Transaction
+            </a>
+            <div class="user-avatar" title="{{ request.user.username }}">
+                {{ request.user.username|first|upper }}
+            </div>
+        </div>
+    </header>
+
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div style="padding: 12px 28px 0;">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show py-2" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+{% else %}
+<!-- PUBLIC LAYOUT (login/register pages) -->
+{% if messages %}
+<div class="container mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% block public_content %}{% endblock %}
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    Chart.defaults.color = 'rgba(255,255,255,0.6)';
+    Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

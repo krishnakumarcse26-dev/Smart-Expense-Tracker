@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block page_title %}Transactions{% endblock %}
+{% block content %}
+<!-- Filters -->
+<div class="card p-3 mb-4">
+  <form method="get" class="row g-2 align-items-end">
+    <div class="col-sm-3">
+      <input type="text" name="search" class="form-control form-control-sm" placeholder="Search..." value="{{ search }}">
+    </div>
+    <div class="col-sm-2">
+      <select name="type" class="form-select form-select-sm">
+        <option value="">All Types</option>
+        <option value="income" {% if tx_type == "income" %}selected{% endif %}>Income</option>
+        <option value="expense" {% if tx_type == "expense" %}selected{% endif %}>Expense</option>
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <select name="category" class="form-select form-select-sm">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if category_id == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <input type="date" name="date_from" class="form-control form-control-sm" value="{{ date_from }}">
+    </div>
+    <div class="col-sm-2">
+      <input type="date" name="date_to" class="form-control form-control-sm" value="{{ date_to }}">
+    </div>
+    <div class="col-sm-1 d-flex gap-1">
+      <button type="submit" class="btn btn-sm" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);border:none;color:#fff;white-space:nowrap;">Filter</button>
+      <a href="{% url "transaction_list" %}" class="btn btn-sm btn-outline-secondary">&#10005;</a>
+    </div>
+  </form>
+</div>
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div style="color:rgba(255,255,255,0.5);font-size:13px;">{{ total_count }} transaction{{ total_count|pluralize }}</div>
+  <a href="{% url "transaction_create" %}" class="btn btn-sm" style="background:linear-gradient(135deg,#00d4aa,#7c3aed);border:none;color:#fff;font-weight:600;">
+    <i class="bi bi-plus-lg"></i> Add Transaction
+  </a>
+</div>
+
+<!-- Table -->
+<div class="card">
+  <div class="table-responsive">
+    <table class="table m-0">
+      <thead>
+        <tr>
+          <th>Date</th><th>Title</th><th>Category</th><th>Type</th><th class="text-end">Amount</th><th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in page_obj %}
+        <tr>
+          <td style="font-size:13px;white-space:nowrap;">{{ tx.date|date:"d M Y" }}</td>
+          <td>
+            <div style="font-weight:600;font-size:14px;">{{ tx.title }}</div>
+            {% if tx.notes %}<div style="font-size:11px;color:rgba(255,255,255,0.4);">{{ tx.notes|truncatechars:40 }}</div>{% endif %}
+          </td>
+          <td>
+            {% if tx.category %}
+            <span style="padding:3px 10px;border-radius:99px;font-size:12px;background:rgba(255,255,255,0.07);">
+              <i class="bi {{ tx.category.icon }}" style="color:{{ tx.category.color }};"></i> {{ tx.category.name }}
+            </span>
+            {% else %}<span style="color:rgba(255,255,255,0.3);font-size:12px;">Uncategorized</span>{% endif %}
+          </td>
+          <td>
+            <span class="badge {% if tx.transaction_type == "income" %}badge-income{% else %}badge-expense{% endif %}" style="font-size:11px;padding:4px 10px;border-radius:99px;">
+              {{ tx.get_transaction_type_display }}
+            </span>
+          </td>
+          <td class="text-end" style="font-weight:700;color:{% if tx.transaction_type == "income" %}#00d4aa{% else %}#ef4444{% endif %};">
+            {% if tx.transaction_type == "income" %}+{% else %}-{% endif %}&#8377;{{ tx.amount|floatformat:2 }}
+          </td>
+          <td class="text-end">
+            <a href="{% url "transaction_edit" tx.pk %}" class="btn btn-sm btn-outline-secondary" style="border-radius:6px;padding:2px 8px;font-size:12px;"><i class="bi bi-pencil"></i></a>
+            <a href="{% url "transaction_delete" tx.pk %}" class="btn btn-sm btn-outline-danger" style="border-radius:6px;padding:2px 8px;font-size:12px;"><i class="bi bi-trash"></i></a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="text-center py-5 text-muted">No transactions found. <a href="{% url "transaction_create" %}" style="color:#00d4aa;">Add your first one!</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Pagination -->
+{% if page_obj.has_other_pages %}
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination pagination-sm" style="gap:4px;">
+      {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&search={{ search }}&type={{ tx_type }}&category={{ category_id }}&date_from={{ date_from }}&date_to={{ date_to }}" style="background:#1a1f2e;border-color:rgba(255,255,255,0.1);color:#fff;">&laquo;</a></li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+      <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}&search={{ search }}&type={{ tx_type }}&category={{ category_id }}&date_from={{ date_from }}&date_to={{ date_to }}" style="background:{% if page_obj.number == num %}linear-gradient(135deg,#00d4aa,#7c3aed){% else %}#1a1f2e{% endif %};border-color:rgba(255,255,255,0.1);color:#fff;">{{ num }}</a>
+      </li>
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&search={{ search }}&type={{ tx_type }}&category={{ category_id }}&date_from={{ date_from }}&date_to={{ date_to }}" style="background:#1a1f2e;border-color:rgba(255,255,255,0.1);color:#fff;">&raquo;</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endif %}
+{% endblock %}

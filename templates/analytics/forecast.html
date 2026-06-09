@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block page_title %}Expense Forecast{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card p-4 mb-4" style="background:linear-gradient(135deg,rgba(0,212,170,0.05),rgba(124,58,237,0.05));border:1px solid rgba(0,212,170,0.2);">
+      <h5 class="fw-bold mb-1">{{ forecast.month_name }} {{ forecast.year }} Forecast</h5>
+      <p class="text-muted small mb-4">Based on current spending rate and historical patterns</p>
+      <div class="row g-4 text-center mb-4">
+        <div class="col-4">
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Spent So Far</div>
+          <div style="font-size:28px;font-weight:700;color:#ef4444;">&#8377;{{ forecast.current_spend|floatformat:0 }}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);">{{ forecast.days_elapsed }} of {{ forecast.days_in_month }} days</div>
+        </div>
+        <div class="col-4">
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Forecasted Total</div>
+          <div style="font-size:28px;font-weight:700;color:#f59e0b;">&#8377;{{ forecast.forecasted_spend|floatformat:0 }}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);">End of month estimate</div>
+        </div>
+        <div class="col-4">
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Forecast Accuracy</div>
+          <div style="font-size:28px;font-weight:700;color:#00d4aa;">{{ forecast.accuracy }}%</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.4);">{{ forecast.days_remaining }} days remaining</div>
+        </div>
+      </div>
+      <!-- Visual bar -->
+      <div style="margin-bottom:8px;font-size:12px;color:rgba(255,255,255,0.5);">Monthly Progress</div>
+      <div style="height:20px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;position:relative;">
+        <div style="height:100%;width:{% widthratio forecast.days_elapsed forecast.days_in_month 100 %}%;background:linear-gradient(90deg,#00d4aa,#7c3aed);border-radius:99px;"></div>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:rgba(255,255,255,0.4);">Day {{ forecast.days_elapsed }} / {{ forecast.days_in_month }}</div>
+    </div>
+
+    <!-- Algorithm explanation -->
+    <div class="card p-4 mb-4">
+      <h6 class="fw-bold mb-3">How This is Calculated</h6>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.8;">
+        <p><strong style="color:#00d4aa;">Step 1 — Daily Rate:</strong> &#8377;{{ forecast.current_spend|floatformat:0 }} spent &divide; {{ forecast.days_elapsed }} days = <strong style="color:#fff;">&#8377;{{ forecast.daily_rate|floatformat:0 }}/day</strong></p>
+        <p><strong style="color:#7c3aed;">Step 2 — Simple Projection:</strong> &#8377;{{ forecast.daily_rate|floatformat:0 }}/day &times; {{ forecast.days_in_month }} days = current-rate estimate</p>
+        <p><strong style="color:#f59e0b;">Step 3 — Weighted Forecast:</strong> (Current-rate &times; 60%) + (Historical avg &#8377;{{ forecast.historical_avg|floatformat:0 }} &times; 40%) = <strong style="color:#fff;">&#8377;{{ forecast.forecasted_spend|floatformat:0 }}</strong></p>
+        <p style="font-size:12px;color:rgba(255,255,255,0.35);">Accuracy improves as more days pass. Currently at {{ forecast.accuracy }}% confidence based on {{ forecast.days_elapsed }} days of data.</p>
+      </div>
+    </div>
+
+    <div class="card p-4">
+      <h6 class="fw-bold mb-3">Tips to Reduce Forecasted Spend</h6>
+      <ul style="color:rgba(255,255,255,0.6);font-size:13px;line-height:2;">
+        <li>Use the <a href="{% url "what_if" %}" style="color:#00d4aa;">What-If Simulator</a> to model spending reductions.</li>
+        <li>Check your <a href="{% url "budget_list" %}" style="color:#00d4aa;">budgets</a> for categories close to their limit.</li>
+        <li>Review your <a href="{% url "subscription_list" %}" style="color:#00d4aa;">subscriptions</a> for unused services.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
